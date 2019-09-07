@@ -117,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     print("Sending ${json.encode(data)}");
 
-    http.post(bobbaServer + "/api/add", body: json.encode(data))
+    http.post(localhostServer + "/api/add", body: json.encode(data))
     .then((res) {
       print(res.body);
     });
