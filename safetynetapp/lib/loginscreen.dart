@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
+import 'globals.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,7 +18,7 @@ class LoginScreenState extends State<LoginScreen> {
     String email = emailController.value.text;
     String password = passwordController.value.text;
 
-    String url = 'http://localhost:5000/api/login';
+    String url = '$serverUrl/api/login';
     Map<String,String> headers = {"Content-type": "application/json"};
     Map<String,String> bodyData = {"email": email, "password": password};
     Response response = await post(url, headers: headers, body: json.encode(bodyData));
@@ -51,7 +52,7 @@ class LoginScreenState extends State<LoginScreen> {
     String email = emailController.value.text;
     String password = passwordController.value.text;
 
-    String url = 'http://localhost:5000/api/register';
+    String url = '$serverUrl/api/register';
     Map<String,String> headers = {"Content-type": "application/json"};
     Map<String,String> bodyData = {"email": email, "password": password};
     Response response = await post(url, headers: headers, body: json.encode(bodyData));
