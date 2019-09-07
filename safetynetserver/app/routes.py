@@ -34,7 +34,7 @@ def register():
 def getreports():
     data = json.loads(request.data)
 
-    if data.get('longitude') == None or data.gets('latitude') == None:
+    if data.get('longitude') == None or data.get('latitude') == None:
         success = False
     else:
         longitude = float(data.get('longitude'))
