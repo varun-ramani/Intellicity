@@ -13,6 +13,9 @@ def generate_jwt(email):
     print(email)
     return jwt.encode(dict({'email': email}), secret_key, algorithm='HS256')
 
+def decode_jwt(authtoken):
+    return jwt.decode(authtoken, secret_key)
+
 def register_user(email, password):
     user = {
         "email": email,

@@ -18,7 +18,7 @@ class LoginScreenState extends State<LoginScreen> {
     String email = emailController.value.text;
     String password = passwordController.value.text;
 
-    String url = '$serverUrl/api/login';
+    String url = '$localhostServer/api/login';
     Map<String,String> headers = {"Content-type": "application/json"};
     Map<String,String> bodyData = {"email": email, "password": password};
     Response response = await post(url, headers: headers, body: json.encode(bodyData));
@@ -52,7 +52,7 @@ class LoginScreenState extends State<LoginScreen> {
     String email = emailController.value.text;
     String password = passwordController.value.text;
 
-    String url = '$serverUrl/api/register';
+    String url = '$localhostServer/api/register';
     Map<String,String> headers = {"Content-type": "application/json"};
     Map<String,String> bodyData = {"email": email, "password": password};
     Response response = await post(url, headers: headers, body: json.encode(bodyData));

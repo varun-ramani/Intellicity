@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,6 +8,9 @@ import 'package:location/location.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
+import 'globals.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ActionButton extends StatelessWidget {
   VoidCallback onPress;
@@ -15,11 +19,13 @@ class ActionButton extends StatelessWidget {
   ActionButton(this.onPress, this.color, this.iconData);
 
   Widget build(BuildContext build) {
+    double width = MediaQuery.of(build).size.width;
+    double height = MediaQuery.of(build).size.width - 1;
     return Container(
-      padding: EdgeInsets.all(20.0),
+      padding: EdgeInsets.all(width * ((1 / 10) / 2)),
       child: RawMaterialButton(
-        padding: EdgeInsets.all(20.0),
-        child: Icon(iconData, size: 40.0, color: color),
+        padding: EdgeInsets.all(width * ((1 / 9) / 2)),
+        child: Icon(iconData, size: width * (1 / 9), color: color),
         onPressed: onPress,
         splashColor: color.withOpacity(0.5),
         shape: CircleBorder(),
@@ -44,6 +50,11 @@ class _HomeScreenState extends State<HomeScreen> {
   IconData _buttonIcon = Icons.keyboard_arrow_up;
   File _image;
 
+  void addEntry(String tag, Color color, BuildContext context) async {
+    await getDescriptionAndImage(context, color, tag);
+    await uploadToServer(tag);
+  }
+
   _getLocation() async {
     var currentLocation = await location.getLocation();
     setState(() {
@@ -52,13 +63,66 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  Future getImage() async {
+  Future getDescriptionAndImage(BuildContext context, Color color, String tag) async {
+
+    TextEditingController descriptionController = TextEditingController();
+
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(tag.toUpperCase()),
+          content: TextField(
+            controller: descriptionController,
+            keyboardType: TextInputType.multiline,
+            maxLines: null,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: color)),
+              labelText: "Description",
+              labelStyle: TextStyle(color: color)
+            ),
+          ),
+          actions: <Widget>[
+            MaterialButton(
+              child: Text("OK", style: TextStyle(color: color)),
+              onPressed: () => Navigator.pop(context),
+            )
+          ],
+        );
+      }
+    );
+
     var image = await ImagePicker.pickImage(source: ImageSource.camera);
 
     setState(() {
       _image = image;
     });
+
+    return image;
   }
+
+  Future uploadToServer(String tag) async {
+    await _getLocation();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String authtoken = prefs.getString("authtoken");
+    Map<String, String> data = {
+      "authtoken": authtoken,
+      "longitude": _longitude.toString(),
+      "latitude": _latitude.toString(),
+      "image": base64Encode(_image.readAsBytesSync()),
+      "description": "",
+      "tags": json.encode([tag])
+    };
+
+    print("Sending ${json.encode(data)}");
+
+    http.post(bobbaServer + "/api/add", body: json.encode(data))
+    .then((res) {
+      print(res.body);
+    });
+  }
+
 
   @override
   void initState() {
@@ -134,18 +198,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: <Widget>[
                           Row(
                             children: <Widget>[
-                              ActionButton(getImage, Colors.orange, FontAwesomeIcons.fire),
-                              ActionButton(() => {}, Colors.blue, FontAwesomeIcons.water),
-                              ActionButton(() => {}, Colors.yellow[500], FontAwesomeIcons.bolt),
+                              ActionButton(() => addEntry("fire", Colors.orange, context), Colors.orange, FontAwesomeIcons.fire),
+                              ActionButton(() => addEntry("water", Colors.blue, context), Colors.blue, FontAwesomeIcons.water),
+                              ActionButton(() => addEntry("bolt", Colors.yellow[500], context), Colors.yellow[500], FontAwesomeIcons.bolt),
                             ],
+                            mainAxisAlignment: MainAxisAlignment.center,
                           ),
-                          Row(
-                            children: <Widget>[
-                              ActionButton(() => getImage, Colors.red, Icons.backspace),
-                              ActionButton(() => {}, Colors.purple, Icons.ac_unit),
-                              ActionButton(() => {}, Colors.orange, Icons.access_alarm),
-                            ],
-                          )
                         ],
                       )
                     ],

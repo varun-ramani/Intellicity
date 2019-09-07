@@ -1,7 +1,7 @@
 from app import app
 from flask import request
 import json
-from auth import authenticate_user, register_user
+from auth import authenticate_user, register_user, decode_jwt
 from database import add, retrieve, get_image
 
 CONV = .01447178
@@ -34,7 +34,7 @@ def register():
 @app.route("/api/retrieve", methods=['POST'])
 def getreports():
     data = json.loads(request.data)
- 
+
     if data.get('longitude') == None or data.gets('latitude') == None:
         success = False
     else:
@@ -71,10 +71,11 @@ def getimg():
 
 @app.route("/api/add", methods=['POST'])
 def addreport():
+    print(request.data)
     try:
         data = json.loads(request.data)
         data = {
-            'email': data.get('email'),
+            'email': decode_jwt(data.get('authtoken'))['email'],
             'longitude': float(data.get('longitude')),
             'latitude': float(data.get('latitude')),
             'image': data.get('image'),
