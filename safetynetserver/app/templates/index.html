@@ -55,7 +55,7 @@
                             heatmap.setMap(map);
                         }
                     };
-                    xhr.open("POST", "http://safetynet.abobba.com/api/retrieve", true);
+                    xhr.open("POST", "https://safetynet.abobba.com/api/retrieve", true);
                     xhr.setRequestHeader('Content-Type', 'application/json');
                     xhr.send(JSON.stringify({
                         "longitude": position.coords.longitude,
