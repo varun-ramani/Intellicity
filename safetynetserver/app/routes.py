@@ -3,13 +3,12 @@ from flask import request
 import json
 from auth import authenticate_user, register_user, decode_jwt
 from database import add, retrieve, get_image
-
+from flask import render_template
 CONV = .01447178
 
 @app.route("/", methods=['GET'])
 def index():
-    return "App started successfully"
-
+    return render_template("index.html" )
 
 @app.route("/api/login", methods=['POST'])
 def login():
