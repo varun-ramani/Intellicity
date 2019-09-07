@@ -49,7 +49,7 @@ def getreports():
     if success == False:
         return json.dumps({"status": "error"})
     else:
-        return retrieve()
+        return retrieve(upper_lat, lower_lat, upper_long, lower_long)
 
 @app.route("/api/retrieveimg", methods=['POST'])
 def getimg():
