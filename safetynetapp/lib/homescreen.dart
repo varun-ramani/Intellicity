@@ -11,7 +11,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'globals.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 class ActionButton extends StatelessWidget {
   VoidCallback onPress;
   Color color;
@@ -49,6 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
   double _longitude = 0;
   IconData _buttonIcon = Icons.keyboard_arrow_up;
   File _image;
+  String _description;
 
   void addEntry(String tag, Color color, BuildContext context) async {
     await getDescriptionAndImage(context, color, tag);
@@ -93,10 +93,11 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     );
 
-    var image = await ImagePicker.pickImage(source: ImageSource.camera);
+    var image = await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 50.0);
 
     setState(() {
       _image = image;
+      _description = descriptionController.value.text;
     });
 
     return image;
@@ -111,13 +112,13 @@ class _HomeScreenState extends State<HomeScreen> {
       "longitude": _longitude.toString(),
       "latitude": _latitude.toString(),
       "image": base64Encode(_image.readAsBytesSync()),
-      "description": "",
+      "description": _description,
       "tags": json.encode([tag])
     };
 
     print("Sending ${json.encode(data)}");
 
-    http.post(localhostServer + "/api/add", body: json.encode(data))
+    http.post(bobbaServer + "/api/add", body: json.encode(data))
     .then((res) {
       print(res.body);
     });

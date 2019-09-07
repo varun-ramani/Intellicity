@@ -4,6 +4,7 @@ import json
 from auth import authenticate_user, register_user, decode_jwt
 from database import add, retrieve, get_image
 from flask import render_template
+import traceback
 CONV = .01447178
 
 @app.route("/", methods=['GET'])
@@ -94,4 +95,5 @@ def addreport():
         else:
             return json.dumps({"status": "success"})
     except:
+        traceback.print_exc()
         return json.dumps({"status": "error"})
