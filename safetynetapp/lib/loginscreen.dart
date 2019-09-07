@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'dart:convert';
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() {
@@ -9,11 +13,71 @@ class LoginScreenState extends State<LoginScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  void login() {
+  void login(context) async {
     String email = emailController.value.text;
-    String password = emailController.value.text;
+    String password = passwordController.value.text;
 
-    Navigator.pushReplacementNamed(context, '/home');
+    String url = 'http://localhost:5000/api/login';
+    Map<String,String> headers = {"Content-type": "application/json"};
+    Map<String,String> bodyData = {"email": email, "password": password};
+    Response response = await post(url, headers: headers, body: json.encode(bodyData));
+
+    Map<String, dynamic> responseMap = json.decode(response.body);
+    if (responseMap['status'] == "error") {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Error"),
+          content: Text("Incorrect username or password!"),
+          actions: <Widget>[
+            MaterialButton(
+              child: Text("OK", style: TextStyle(color: Colors.blue)),
+              onPressed: () => Navigator.pop(context),
+            )
+          ],
+        )
+      );
+    } else {
+      print("Success!");
+      final preferences = await SharedPreferences.getInstance();
+      preferences.setString("authtoken", responseMap['authtoken']);
+      Navigator.pushReplacementNamed(context, "/home");
+      print(preferences.getKeys());
+    }
+
+  }
+
+  void register(context) async {
+    String email = emailController.value.text;
+    String password = passwordController.value.text;
+
+    String url = 'http://localhost:5000/api/register';
+    Map<String,String> headers = {"Content-type": "application/json"};
+    Map<String,String> bodyData = {"email": email, "password": password};
+    Response response = await post(url, headers: headers, body: json.encode(bodyData));
+
+    Map<String, dynamic> responseMap = json.decode(response.body);
+    if (responseMap['status'] == "error") {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Error"),
+          content: Text("That user already exists!"),
+          actions: <Widget>[
+            MaterialButton(
+              child: Text("OK", style: TextStyle(color: Colors.blue)),
+              onPressed: () => Navigator.pop(context),
+            )
+          ],
+        )
+      );
+    } else {
+      print("Success!");
+      final preferences = await SharedPreferences.getInstance();
+      preferences.setString("authtoken", responseMap['authtoken']);
+      Navigator.pushReplacementNamed(context, "/home");
+    }
+
   }
 
   Widget build(BuildContext context) {
@@ -60,8 +124,14 @@ class LoginScreenState extends State<LoginScreen> {
     );
 
     final loginButton = MaterialButton(
-      child: Text("Login!", style: TextStyle(color: Colors.white)),
-      onPressed: login,
+      child: Text("Login", style: TextStyle(color: Colors.white, fontSize: 16.0)),
+      onPressed: () => login(context),
+      animationDuration: Duration(seconds: 5),
+    );
+
+  final registerButton = MaterialButton(
+      child: Text("Register", style: TextStyle(color: Colors.white, fontSize: 16.0)),
+      onPressed: () => register(context),
       animationDuration: Duration(seconds: 5),
     );
 
@@ -86,7 +156,7 @@ class LoginScreenState extends State<LoginScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
-                  loginButton
+                  registerButton, loginButton
                 ],
               ),
             )
