@@ -8,7 +8,7 @@ CONV = .01447178
 
 @app.route("/", methods=['GET'])
 def index():
-    return render_template("index.html", points=[] )
+    return render_template("index.html" )
     return "App started successfully"
 
 @app.route("/api/login", methods=['POST'])
