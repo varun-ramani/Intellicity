@@ -1,15 +1,15 @@
 from app import app
 from flask import request
 import json
-from auth import authenticate_user, register_user
+from auth import authenticate_user, register_user, decode_jwt
 from database import add, retrieve, get_image
-
+from flask import render_template
 CONV = .01447178
 
 @app.route("/", methods=['GET'])
 def index():
+    return render_template("index.html", points=[] )
     return "App started successfully"
-
 
 @app.route("/api/login", methods=['POST'])
 def login():
@@ -74,7 +74,7 @@ def addreport():
     try:
         data = json.loads(request.data)
         data = {
-            'email': data.get('email'),
+            'email': decode_jwt(data.get('email')),
             'longitude': float(data.get('longitude')),
             'latitude': float(data.get('latitude')),
             'image': data.get('image'),
