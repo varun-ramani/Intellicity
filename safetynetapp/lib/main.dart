@@ -8,7 +8,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext build) {
     return MaterialApp(
       title: "SafetyNet",
-      initialRoute: '/login',
+      initialRoute: '/home',
       routes: {
         '/login': (context) => LoginScreen(),
         '/home': (context) => HomeScreen(),
