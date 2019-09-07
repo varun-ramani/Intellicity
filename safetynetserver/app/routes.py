@@ -1,15 +1,15 @@
 from app import app
 from flask import request
 import json
-from auth import authenticate_user, register_user
+from auth import authenticate_user, register_user, decode_jwt
 from database import add, retrieve, get_image
-
+from flask import render_template
+import traceback
 CONV = .01447178
 
 @app.route("/", methods=['GET'])
 def index():
-    return "App started successfully"
-
+    return render_template("index.html" )
 
 @app.route("/api/login", methods=['POST'])
 def login():
@@ -34,8 +34,8 @@ def register():
 @app.route("/api/retrieve", methods=['POST'])
 def getreports():
     data = json.loads(request.data)
- 
-    if data.get('longitude') == None or data.gets('latitude') == None:
+
+    if data.get('longitude') == None or data.get('latitude') == None:
         success = False
     else:
         longitude = float(data.get('longitude'))
@@ -71,10 +71,11 @@ def getimg():
 
 @app.route("/api/add", methods=['POST'])
 def addreport():
+    print(request.data)
     try:
         data = json.loads(request.data)
         data = {
-            'email': data.get('email'),
+            'email': decode_jwt(data.get('authtoken'))['email'],
             'longitude': float(data.get('longitude')),
             'latitude': float(data.get('latitude')),
             'image': data.get('image'),
@@ -94,4 +95,5 @@ def addreport():
         else:
             return json.dumps({"status": "success"})
     except:
+        traceback.print_exc()
         return json.dumps({"status": "error"})
