@@ -297,7 +297,7 @@
 
     </script>
     <script>
-        const socket = io('https://intellicity.tech/socket');
+        const socket = io('https://intellicity.tech/socket',  { path: '/socket.io'});
         socket.on('message', (data) => {
             currPos()
             console.log('socket receive')
