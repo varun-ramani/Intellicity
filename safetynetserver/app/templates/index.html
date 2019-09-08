@@ -292,12 +292,12 @@
                 "password": password
             }));
         }
-     
+
 
     </script>
     <script>
         const socket = io('https://intellicity.tech');
-        // const socket = io('http://127.0.0.1:5000/socket');
+        // const socket = io('http://127.0.0.1:5000');
 
         socket.on('message', (data) => {
             currPos()
@@ -309,7 +309,7 @@
         function initMap() {
             map = new google.maps.Map(document.getElementById('map'), {
                 // center: { lat: -34.397, lng: 150.644 },
-                zoom: 6
+                zoom: 16
             });
             infoWindow = new google.maps.InfoWindow;
             currPos()
@@ -346,7 +346,6 @@
                         lng: position.coords.longitude
                     };
                     map.setCenter(pos);
-                    map.setZoom(16)
                 }, function () {
                     handleLocationError(true, infoWindow, map.getCenter());
                 });
@@ -468,6 +467,3 @@
 </body>
 
 </html>
-
-
-

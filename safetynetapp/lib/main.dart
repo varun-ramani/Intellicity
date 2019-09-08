@@ -8,6 +8,9 @@ void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   Widget build(BuildContext build) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
     PermissionsService().requestCamera();
     SystemChrome.setEnabledSystemUIOverlays([]);
     return MaterialApp(
