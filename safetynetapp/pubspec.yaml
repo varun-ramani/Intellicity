@@ -32,6 +32,8 @@ dependencies:
   cupertino_icons: ^0.1.2
   http: ^0.12.0
   shared_preferences: ^0.5.3+4
+  flutter_exif_rotation: ^0.2.4
+  vibration: 1.2.1
 
 dev_dependencies:
   flutter_test:

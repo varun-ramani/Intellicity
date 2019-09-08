@@ -11,24 +11,33 @@ import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'globals.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_exif_rotation/flutter_exif_rotation.dart';
+import 'package:vibration/vibration.dart';
 class ActionButton extends StatelessWidget {
   VoidCallback onPress;
   Color color;
   IconData iconData;
-  ActionButton(this.onPress, this.color, this.iconData);
+  String label;
+  ActionButton(this.onPress, this.color, this.iconData, this.label);
 
   Widget build(BuildContext build) {
     double width = MediaQuery.of(build).size.width;
-    double height = MediaQuery.of(build).size.width - 1;
-    return Container(
-      padding: EdgeInsets.all(width * ((1 / 10) / 2)),
-      child: RawMaterialButton(
-        padding: EdgeInsets.all(width * ((1 / 9) / 2)),
-        child: Icon(iconData, size: width * (1 / 9), color: color),
-        onPressed: onPress,
-        splashColor: color.withOpacity(0.5),
-        shape: CircleBorder(),
-      ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        Container(
+          padding: EdgeInsets.all(width * ((1 / 10) / 2)),
+          child: RawMaterialButton(
+            padding: EdgeInsets.all(width * ((1 / 9) / 2)),
+            child: Icon(iconData, size: width * (1 / 9), color: color),
+            onPressed: onPress,
+            splashColor: color.withOpacity(0.5),
+            shape: CircleBorder(),
+          ),
+        ),
+        Text(label, style: TextStyle(color: Colors.grey, fontSize: 15.0))
+      ],
     );
   }
 }
@@ -39,16 +48,61 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  PanelController _panelController = PanelController();
+  Widget initialButtons() {
+    return Column(
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            ActionButton(() {setState(() {_buttons = hazardButtons();});}, Colors.red, FontAwesomeIcons.exclamationTriangle, "Hazard"),
+            ActionButton(() {setState(() {_buttons = hazardButtons();});}, Colors.black, FontAwesomeIcons.skullCrossbones, "Crime"),
+            ActionButton(() {setState(() {_buttons = hazardButtons();});}, Colors.green, FontAwesomeIcons.toilet, "Utilities"),
+          ],
+          mainAxisAlignment: MainAxisAlignment.center,
+        ),
+      ],
+    );
+  }
 
+  Widget hazardButtons() {
+    return Column(
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            ActionButton(() => {}, Colors.orange, FontAwesomeIcons.fireAlt, "Fire"),
+            ActionButton(() => {}, Colors.blue, FontAwesomeIcons.water, "Flood"),
+            ActionButton(() => {}, Colors.black, FontAwesomeIcons.hammer, "Infra Damage"),
+          ],
+        ),
+        Row(
+          children: <Widget>[
+            ActionButton(() => {}, Colors.yellow[500], FontAwesomeIcons.bolt, "Electrical"),
+            ActionButton(() => {}, Colors.red, FontAwesomeIcons.carCrash, "Accident"),
+            ActionButton(() => {}, Colors.black, FontAwesomeIcons.hammer, "Infra Damage"),
+          ],
+        )
+      ],
+    );
+  }
+
+
+  PanelController _panelController = PanelController();
   Completer<GoogleMapController> _controller = Completer();
+
   Location location = Location();
 
   double _latitude = 0;
   double _longitude = 0;
-  IconData _buttonIcon = Icons.keyboard_arrow_up;
+  IconData _buttonIcon;
   File _image;
   String _description;
+
+  Widget _buttons;
+
+  void initState() {
+    super.initState();
+    _buttonIcon = Icons.keyboard_arrow_up;
+    _buttons = initialButtons();
+  }
 
   void addEntry(String tag, Color color, BuildContext context) async {
     await getDescriptionAndImage(context, color, tag);
@@ -64,9 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future getDescriptionAndImage(BuildContext context, Color color, String tag) async {
-
     TextEditingController descriptionController = TextEditingController();
-
     await showDialog(
       context: context,
       builder: (context) {
@@ -93,7 +145,8 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     );
 
-    var image = await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 50.0);
+    var image = await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 450.0);
+    image = await FlutterExifRotation.rotateImage(path: image.path);
 
     setState(() {
       _image = image;
@@ -125,36 +178,30 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
 
-  @override
-  void initState() {
-    super.initState();
-    _getLocation();
-  }
-
   // map created
   void _onMapCreated(GoogleMapController controller) {
     _controller.complete(controller);
   }
 
-  void togglePanel() {
-    if (_panelController.isPanelClosed()) {
-      _panelController.open();
-      setArrowDown();
-    } else {
-      _panelController.close();
-      setArrowUp();
-    }
-  }
-
-  void setArrowUp() {
+  void setButtons(Widget buttons) {
     setState(() {
-      _buttonIcon = Icons.keyboard_arrow_up;
+      _buttons = buttons;
     });
   }
 
-  void setArrowDown() {
+  void togglePanel() {
+    if (_panelController.isPanelClosed()) {
+      _panelController.open();
+      setArrow("down");
+    } else {
+      _panelController.close();
+      setArrow("up");
+    }
+  }
+
+  void setArrow(String direction) {
     setState(() {
-      _buttonIcon = Icons.keyboard_arrow_down;
+      _buttonIcon = (direction == "up") ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down;
     });
   }
 
@@ -174,8 +221,14 @@ class _HomeScreenState extends State<HomeScreen> {
             maxHeight: MediaQuery.of(context).size.height * 0.7,
             controller: _panelController,
             renderPanelSheet: false,
-            onPanelOpened: setArrowDown,
-            onPanelClosed: setArrowUp,
+            onPanelOpened: () => setArrow("down"),
+            onPanelClosed: () {
+              setArrow("up");
+              setState(() {
+                _buttons = initialButtons();
+              });
+              Vibration.vibrate(duration: 100);
+            },
             panel: Stack(
               children: <Widget>[
                 Container(
@@ -195,27 +248,21 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: IconButton(icon: Icon(_buttonIcon), onPressed: togglePanel),
                         padding: EdgeInsets.all(20.0)
                       ),
-                      Column(
-                        children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              ActionButton(() => addEntry("fire", Colors.orange, context), Colors.orange, FontAwesomeIcons.fire),
-                              ActionButton(() => addEntry("water", Colors.blue, context), Colors.blue, FontAwesomeIcons.water),
-                              ActionButton(() => addEntry("bolt", Colors.yellow[500], context), Colors.yellow[500], FontAwesomeIcons.bolt),
-                            ],
-                            mainAxisAlignment: MainAxisAlignment.center,
-                          ),
-                        ],
+                      AnimatedSwitcher(
+                        duration: const Duration(seconds: 2),
+                        child: _buttons,
                       )
                     ],
                   )
                 ),
               ],
             ),
-            body: Container(
-              child: map,
-              height: 200,
-              width: 200
-            )));
+        body: Container(
+          child: map,
+          height: 200,
+          width: 200
+        )
+      )
+    );
   }
 }
