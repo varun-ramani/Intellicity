@@ -5,6 +5,9 @@ from auth import authenticate_user, register_user, decode_jwt
 from database import add, retrieve, get_image, users
 from flask import render_template
 import traceback
+from send_message import send
+
+
 CONV = .01447178
 
 import logging
@@ -85,7 +88,9 @@ def getimg():
 
 @app.route("/api/add", methods=['POST'])
 def addreport():
-    print(request.data)
+
+
+
     try:
         data = json.loads(request.data)
         data = {
@@ -100,6 +105,9 @@ def addreport():
             success = False
         else:
             report_id = add(data)
+            userdata = users.find({"phone": {"$exists": True}})
+            for user in userdata:
+                send(user['phone'])
             if report_id != None:
                 success = True
             else:
