@@ -12,7 +12,7 @@ if __name__ == '__main__':
 
 @socketio.on('message')
 def handle_message(message):
-    print(message)
+    print("messsage" + message)
     emit('update', message, broadcast=True)
 
 @socketio.on('connect')
