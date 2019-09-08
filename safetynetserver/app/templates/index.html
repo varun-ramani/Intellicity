@@ -315,6 +315,7 @@
             currPos()
         }
         function currPos() {
+            markers = []
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(function (position) {
                     var xhr = new XMLHttpRequest();
@@ -322,6 +323,49 @@
                         if (this.readyState == 4 && this.status == 200) {
                             tmp = JSON.parse(xhr.responseText)
                             tmp.forEach(function (a) {
+                                marker = new google.maps.Marker({
+                                    map: map,
+                                    draggable: false,
+                                    animation: google.maps.Animation.DROP,
+                                    position: { lat: a['latitude'], lng: a['longitude'] }
+                                })
+                                data = {
+                                    'marker': marker,
+                                    'id': a['_id'],
+                                    'description': a['description'],
+                                    'tag': a['tags']
+                                }
+                                markers.push(data)
+                                marker.addListener('click', function () {
+
+
+                                    var xhr = new XMLHttpRequest();
+                                    xhr.onreadystatechange = function () {
+                                        if (this.readyState == 4 && this.status == 200) {
+                                            tmp = JSON.parse(xhr.responseText)
+                                            img = "data:image/png;base64," + tmp['image']
+
+                                        }else{
+                                            img = ""
+                                        }
+
+                                        contentString = "<div class=\"card\" style=\"width: 18rem;\">\r\n  <img class=\"card-img-top\" src=\"" + img + "\" alt=\"Image Not Available\">\r\n  <div class=\"card-body\">\r\n    <h5 class=\"card-title\">" + data['tag'] + "</h5>\r\n    <p class=\"card-text\">" + data['description'] + "</p>\r\n  </div>\r\n</div>"
+                                        var infowindow = new google.maps.InfoWindow({
+                                            content: contentString
+                                        });
+                                        infowindow.open(map, marker);
+                                    };
+                                    xhr.open("POST", "https://safetynet.abobba.com/api/retrieveimg", true);
+                                    xhr.setRequestHeader('Content-Type', 'application/json');
+                                    xhr.send(JSON.stringify({
+                                        "id": data['id']['$oid']
+                                    }));
+
+
+
+
+                                });
+
                                 heatmapData.push(new google.maps.LatLng(a['latitude'], a['longitude']))
                             });
                             var heatmap = new google.maps.visualization.HeatmapLayer({
@@ -331,6 +375,7 @@
                             heatmap.setMap(map);
                         }
                     };
+                    console.log(markers)
                     xhr.open("POST", "https://safetynet.abobba.com/api/retrieve", true);
                     xhr.setRequestHeader('Content-Type', 'application/json');
                     xhr.send(JSON.stringify({
@@ -353,8 +398,6 @@
                 handleLocationError(false, infoWindow, map.getCenter());
             }
             console.log(heatmapData)
-
-
         }
 
         function handleLocationError(browserHasGeolocation, infoWindow, pos) {
@@ -429,7 +472,7 @@
                 'latitude': pos2['lat'],
                 'authtoken': Cookies.get('authtoken'),
                 'image': imagefinal,
-                'description': document.getElementById('description')
+                'description': document.getElementById('description').value
 
             }
             console.log(data)

@@ -10,7 +10,7 @@ places = database['places']
 
 
 def add(report):
-    reports = database.reports
+    reports = database.reports0
     report_id = reports.insert_one(report).inserted_id
     return report_id
 
