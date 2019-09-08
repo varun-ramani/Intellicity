@@ -234,8 +234,9 @@
         $('#auth').modal({ backdrop: 'static', keyboard: false })
 
         function login() {
-            email = document.getElementById('email')
-            password = document.getElementById('password')
+            email = document.getElementById('email').value
+            password = document.getElementById('password').value
+            console.log(email + " " + password)
             if (email == undefined || password == undefined) {
                 document.getElementById('authmsg').innerHTML = "<div class='alert alert-danger' id='authmsg' role='alert'>Bad Credentials</div>"
                 return
@@ -266,8 +267,8 @@
         }
 
         function register() {
-            email = document.getElementById('email')
-            password = document.getElementById('password')
+            email = document.getElementById('email').value
+            password = document.getElementById('password').value
             if (email == undefined || password == undefined) {
                 document.getElementById('authmsg').innerHTML = "<div class='alert alert-danger' id='authmsg' role='alert'>Bad Input</div>"
                 return
