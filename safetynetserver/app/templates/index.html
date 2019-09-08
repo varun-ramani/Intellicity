@@ -300,6 +300,7 @@
         const socket = io('https://intellicity.tech/');
         socket.on('message', (data) => {
             currPos()
+            console.log('socket receive')
         });
         var map, infoWindow, tmp, pos2;
         var heatmapData = []
@@ -364,8 +365,7 @@
             infoWindow.open(map);
         }
 
-    </script>
-    <script>
+
         tag = ''
         imagefinal = ''
         function previewFile() {
