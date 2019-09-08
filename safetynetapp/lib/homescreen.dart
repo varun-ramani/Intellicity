@@ -11,6 +11,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'globals.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_exif_rotation/flutter_exif_rotation.dart';
 class ActionButton extends StatelessWidget {
   VoidCallback onPress;
   Color color;
@@ -32,6 +33,45 @@ class ActionButton extends StatelessWidget {
     );
   }
 }
+
+class InitialButtons extends StatelessWidget {
+  Widget build(BuildContext build) {
+    return Column(
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                ActionButton(() => {}, Colors.red, FontAwesomeIcons.fireAlt),
+                Text("Hazards", style: TextStyle(color: Colors.grey, fontSize: 15.0))
+              ],
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                ActionButton(() => {}, Colors.black, FontAwesomeIcons.skullCrossbones),
+                Text("Crime", style: TextStyle(color: Colors.grey, fontSize: 15.0))
+              ],
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                ActionButton(() => {}, Colors.green, FontAwesomeIcons.toilet),
+                Text("Utilities", style: TextStyle(color: Colors.grey, fontSize: 15.0))
+              ],
+            ),
+          ],
+          mainAxisAlignment: MainAxisAlignment.center,
+        ),
+      ],
+    );
+  }
+}
+
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -93,7 +133,8 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     );
 
-    var image = await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 50.0);
+    var image = await ImagePicker.pickImage(source: ImageSource.camera, maxWidth: 450.0);
+    image = await FlutterExifRotation.rotateImage(path: image.path);
 
     setState(() {
       _image = image;
@@ -195,18 +236,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: IconButton(icon: Icon(_buttonIcon), onPressed: togglePanel),
                         padding: EdgeInsets.all(20.0)
                       ),
-                      Column(
-                        children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              ActionButton(() => addEntry("fire", Colors.orange, context), Colors.orange, FontAwesomeIcons.fire),
-                              ActionButton(() => addEntry("water", Colors.blue, context), Colors.blue, FontAwesomeIcons.water),
-                              ActionButton(() => addEntry("bolt", Colors.yellow[500], context), Colors.yellow[500], FontAwesomeIcons.bolt),
-                            ],
-                            mainAxisAlignment: MainAxisAlignment.center,
-                          ),
-                        ],
-                      )
+                      InitialButtons()
                     ],
                   )
                 ),
