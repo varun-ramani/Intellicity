@@ -4,17 +4,17 @@ from flask_socketio import SocketIO, emit
 
 socketio = SocketIO(app)
 
-@socketio.on('message', namespace='/live')
+@socketio.on('message')
 def handle_message(message):
-    emit('message', message, broadcast=True, namespace = "/live")
+    emit('message', message, broadcast=True)
 
 
-@socketio.on('connect', namespace='/live')
+@socketio.on('connect')
 def test_connect():
     print("Connected")
 
 
-@socketio.on('disconnect', namespace='/live')
+@socketio.on('disconnect')
 def test_disconnect():
     print('Client disconnected')
 
