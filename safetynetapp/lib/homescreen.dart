@@ -157,6 +157,7 @@ Future addMarker(String danger) async {
       position: LatLng(_latitude, _longitude),
       markerId: MarkerId(danger),
       infoWindow: InfoWindow(title: danger, snippet: _description),
+      icon: BitmapDescriptor.fromAsset("../images/exclamation-triangle-solid.png")
     );
 
   // setState(() {
