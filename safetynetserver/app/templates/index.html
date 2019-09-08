@@ -37,6 +37,38 @@
 
 <body>
 
+    <div class="modal" id="auth" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header justify-content-center">
+                    <h5 class="modal-title">Authentication</h5>
+
+                </div>
+                <div class="modal-body">
+                    <div id="authmsg"></div>
+
+                    <div class="container">
+                        <div class="row my-2">
+                            <input type="email" class="col s12 form-control" id="email" placeholder="Email">
+                        </div>
+                        <div class="row my-2">
+                            <input type="password" class="col s12 form-control" id="password" placeholder="Password">
+                        </div>
+                        <div class="row my-2">
+                            <button type="button" onclick="login()" id="login" class="btn btn-primary col s6 mx-2">
+                                Login
+                            </button>
+                            <button type="button" id="register" onclick="register()"
+                                class="btn btn-primary col s6 mx-2">
+                                Register
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="container " style="z-index: 4; position: fixed;   left: 50%; transform: translate(-50%, 0); bottom:5%">
         <br>
         <button type="button" class="btn btn-danger btn-block" data-toggle="modal" data-target="#reportmodal">
@@ -184,7 +216,8 @@
                             </div>
                         </div>
 
-                        <button class="btn btn-block btn-primary" onclick="report()" data-dismiss="modal">Submit</button>
+                        <button class="btn btn-block btn-primary" onclick="report()"
+                            data-dismiss="modal">Submit</button>
                     </div>
                 </div>
 
@@ -197,7 +230,75 @@
     <div id="map" style="z-index:1; position: relative;"></div>
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
     <script>
+        // $('#auth').modal('show')
+        $('#auth').modal({ backdrop: 'static', keyboard: false })
 
+        function login() {
+            email = document.getElementById('email')
+            password = document.getElementById('password')
+            if (email == undefined || password == undefined) {
+                document.getElementById('authmsg').innerHTML = "<div class='alert alert-danger' id='authmsg' role='alert'>Bad Credentials</div>"
+                return
+            }
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    tmp = JSON.parse(xhr.responseText)
+                    if (tmp['status'] == 'success') {
+                        $('#auth').modal('hide')
+                        Cookies.set('authtoken', tmp['authtoken'])
+                    } else {
+                        document.getElementById('authmsg').innerHTML = "<div class='alert alert-danger' id='authmsg' role='alert'>Bad Credentials</div>"
+                        return
+                    }
+                } else {
+                    document.getElementById('authmsg').innerHTML = "<div class='alert alert-danger' id='authmsg' role='alert'>Error</div>"
+                    return
+                }
+            };
+            xhr.open("POST", "https://safetynet.abobba.com/api/login", true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(JSON.stringify({
+                "email": email,
+                "password": password
+            }));
+
+        }
+
+        function register() {
+            email = document.getElementById('email')
+            password = document.getElementById('password')
+            if (email == undefined || password == undefined) {
+                document.getElementById('authmsg').innerHTML = "<div class='alert alert-danger' id='authmsg' role='alert'>Bad Input</div>"
+                return
+            }
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    tmp = JSON.parse(xhr.responseText)
+                    if (tmp['status'] == 'success') {
+                        $('#auth').modal('hide')
+                        Cookies.set('authtoken', tmp['authtoken'])
+                    } else {
+                        document.getElementById('authmsg').innerHTML = "<div class='alert alert-danger' id='authmsg' role='alert'>Email already in use!</div>"
+                        return
+                    }
+                } else {
+                    document.getElementById('authmsg').innerHTML = "<div class='alert alert-danger' id='authmsg' role='alert'>Error</div>"
+                    return
+                }
+            };
+            xhr.open("POST", "https://safetynet.abobba.com/api/register", true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(JSON.stringify({
+                "email": email,
+                "password": password
+            }));
+        }
+
+
+    </script>
+    <script>
         var map, infoWindow, tmp, pos2;
         var heatmapData = []
 

@@ -14,6 +14,7 @@ def index():
 @app.route("/api/login", methods=['POST'])
 def login():
     data = json.loads(request.data)
+    print(data)
     authentication = authenticate_user(data['email'], data['password'])
     if authentication == None:
         return json.dumps({"status": "error"})
@@ -24,6 +25,7 @@ def login():
 @app.route("/api/register", methods=['POST'])
 def register():
     data = json.loads(request.data)
+    print(data)
     authentication = register_user(data['email'], data['password'])
     if authentication == None:
         return json.dumps({"status": "error"})
