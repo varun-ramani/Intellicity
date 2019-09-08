@@ -138,7 +138,7 @@ class LoginScreenState extends State<LoginScreen> {
 
     final loginTitle = Container(
       padding: EdgeInsets.all(50.0),
-      child: Text("SafetyNet", style: TextStyle(color: Colors.white, fontSize: 40.0, fontFamily: "Verdana")),
+      child: Text("Intellicity", style: TextStyle(color: Colors.white, fontSize: 40.0, fontFamily: "Verdana")),
     );
 
     return Scaffold(

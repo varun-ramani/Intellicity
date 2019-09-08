@@ -298,7 +298,7 @@ Future addMarker(String danger) async {
           Marker(
             markerId: MarkerId(responseData[i]['_id']['\$oid']),
             position: LatLng(responseData[i]['latitude'], responseData[i]['longitude']),
-            infoWindow: InfoWindow(title: responseData[i]['tags'], snippet: responseData[i]['description'])
+            infoWindow: InfoWindow(title: responseData[i]['tags'], snippet: responseData[i]['description']),
           )
         );
       }

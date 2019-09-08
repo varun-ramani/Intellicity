@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
     SystemChrome.setEnabledSystemUIOverlays([]);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: "SafetyNet",
+      title: "Intellicity",
       initialRoute: '/login',
       routes: {
         '/login': (context) => LoginScreen(),
