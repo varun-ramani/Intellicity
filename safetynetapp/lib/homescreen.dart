@@ -40,7 +40,7 @@ class ActionButton extends StatelessWidget {
             shape: CircleBorder(),
           ),
         ),
-        Text(label, style: TextStyle(color: Colors.grey, fontSize: 15.0))
+        Text(label, style: TextStyle(color: Colors.blue, fontSize: 15.0))
       ],
     );
   }
@@ -87,10 +87,10 @@ class _HomeScreenState extends State<HomeScreen> {
         Row(
           children: <Widget>[
             ActionButton(
-                () => addMarker("Fire"), Colors.orange, FontAwesomeIcons.fireAlt, "Fire",
+                () => addEntry("Fire", Colors.orange, context), Colors.orange, FontAwesomeIcons.fireAlt, "Fire",
                 ),
             ActionButton(
-                () => addMarker("Accident"), Colors.blue, FontAwesomeIcons.carCrash, "Accident"),
+                () => addEntry("Accident", Colors.blue, context), Colors.blue, FontAwesomeIcons.carCrash, "Accident"),
             ActionButton(() =>  addMarker("Infra Damage"), Colors.black, FontAwesomeIcons.hammer,
                 "Infra Damage"),
           ],
@@ -106,9 +106,9 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             ActionButton(
-                () =>  addMarker("Violent"), Colors.red, FontAwesomeIcons.dizzy, "Violent"),
+                () =>  addEntry("Violent", Colors.red, context), Colors.red, FontAwesomeIcons.dizzy, "Violent"),
             ActionButton(
-                () =>  addMarker("Not Violent"), Colors.blue, FontAwesomeIcons.user, "Not Violent"),
+                () =>  addEntry("Not Violent", Colors.blue, context), Colors.blue, FontAwesomeIcons.user, "Not Violent"),
           ],
         ),
       ],
@@ -121,10 +121,10 @@ class _HomeScreenState extends State<HomeScreen> {
         Row(
           children: <Widget>[
             ActionButton(
-                () => addMarker("Restroom"), Colors.blue, FontAwesomeIcons.restroom, "Restroom"),
+                () => addEntry("Restroom", Colors.blue, context), Colors.blue, FontAwesomeIcons.restroom, "Restroom"),
             ActionButton(
-                () => addMarker("Parking"), Colors.red, FontAwesomeIcons.parking, "Parking"),
-            ActionButton(() => addMarker("Trash"), Colors.green, FontAwesomeIcons.trash,
+                () => addEntry("Parking", Colors.red, context), Colors.red, FontAwesomeIcons.parking, "Parking"),
+            ActionButton(() => addEntry("Trash", Colors.green, context), Colors.green, FontAwesomeIcons.trash,
                 "Trash"),
           ],
         ),
@@ -152,13 +152,12 @@ Future addMarker(String danger) async {
   if (danger == null) {
     danger = "danger";
   }
-  print("yeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"); // for testing purps
   _getLocation();
   Marker mark = Marker(
       position: LatLng(_latitude, _longitude),
       markerId: MarkerId(danger),
-      infoWindow: InfoWindow(title: danger)
-      );
+      infoWindow: InfoWindow(title: danger, snippet: _description),
+    );
 
   // setState(() {
     _markers.add(mark);
@@ -177,6 +176,7 @@ Future addMarker(String danger) async {
 
   void addEntry(String tag, Color color, BuildContext context) async {
     await getDescriptionAndImage(context, color, tag);
+    addMarker(tag);
     await uploadToServer(tag);
   }
 
@@ -243,7 +243,7 @@ Future addMarker(String danger) async {
 
     print("Sending ${json.encode(data)}");
 
-    http.post(bobbaServer + "/api/add", body: json.encode(data)).then((res) {
+    http.post(server + "/api/add", body: json.encode(data)).then((res) {
       print(res.body);
     });
   }
@@ -279,8 +279,57 @@ Future addMarker(String danger) async {
     });
   }
 
+  void populateMap() async {
+    await _getLocation();
+    Map<String, double> payload = {
+      "longitude": _longitude,
+      "latitude": _latitude
+    };
+
+    Map<String, String> headers = {"Content-type": "application/json"};
+
+    http.Response response = await http.post(server + "/api/retrieve", headers: headers, body: json.encode(payload));
+    Map<String, dynamic> responseMap = json.decode(response.body);
+
+    print(responseMap);
+  }
+
   void _onPressed() {
     // todo: connect this to twilio
+  }
+
+  void subscribe() async {
+    TextEditingController subscribeController = TextEditingController();
+    await showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Subscribe".toUpperCase()),
+            content: TextField(
+              controller: subscribeController,
+              keyboardType: TextInputType.multiline,
+              maxLines: null,
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  focusedBorder:
+                      OutlineInputBorder(borderSide: BorderSide(color: Colors.blue)),
+                  labelText: "Phone Number",
+                  labelStyle: TextStyle(color: Colors.blue)),
+            ),
+            actions: <Widget>[
+              MaterialButton(
+                child: Text("OK", style: TextStyle(color: Colors.blue)),
+                onPressed: () => Navigator.pop(context),
+              )
+            ],
+          );
+        });
+
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        Map<String, String> payload = {"authtoken": prefs.getString("authtoken"), "phone": subscribeController.value.text};
+        Map<String,String> headers = {"Content-type": "application/json"};
+        print(payload);
+        await http.post(server + "/api/subscribe", headers: headers, body: json.encode(payload));
   }
 
   @override
@@ -291,17 +340,20 @@ Future addMarker(String danger) async {
       myLocationEnabled: true,
       // set init cam pos
       initialCameraPosition:
-          CameraPosition(target: LatLng(_latitude, _longitude), zoom: 17.0),
+          CameraPosition(target: LatLng(_latitude, _longitude), zoom: 17.0, tilt: 80),
       markers: Set.from(_markers),
     );
 
     return Scaffold(
-        // appBar: AppBar(
-        //   backgroundColor: Colors.white,
-        //   title: Text("Intellicity", style: TextStyle(color: Colors.black, fontSize: 20.0)),
-        //   centerTitle: true,
-        //   shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20.0), bottomRight: Radius.circular(20.0)))
-        // ),
+        appBar: AppBar(
+          backgroundColor: Colors.blue,
+          title: Text("Intellicity", style: TextStyle(color: Colors.white, fontSize: 20.0)),
+          centerTitle: true,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20.0), bottomRight: Radius.circular(20.0))),
+          actions: <Widget>[
+            IconButton(icon: Icon(FontAwesomeIcons.envelopeOpenText, color: Colors.white), padding: EdgeInsets.all(10.0), onPressed: subscribe)
+          ],
+        ),
         body: SlidingUpPanel(
             maxHeight: MediaQuery.of(context).size.height * 0.5,
             controller: _panelController,
@@ -332,7 +384,7 @@ Future addMarker(String danger) async {
                       children: <Widget>[
                         Container(
                             child: IconButton(
-                                icon: Icon(_buttonIcon),
+                                icon: Icon(_buttonIcon, color: Colors.blue),
                                 onPressed: togglePanel),
                             padding: EdgeInsets.all(20.0)),
                         AnimatedSwitcher(

@@ -2,7 +2,7 @@ from app import app
 from flask import request
 import json
 from auth import authenticate_user, register_user, decode_jwt
-from database import add, retrieve, get_image
+from database import add, retrieve, get_image, users
 from flask import render_template
 import traceback
 CONV = .01447178
@@ -21,6 +21,14 @@ def login():
     else:
         return json.dumps({"status": "success", "authtoken": authentication})
 
+@app.route("/api/subscribe", methods=['POST'])
+def subscribe():
+    data = json.loads(request.data)
+    print(data)
+    email = decode_jwt(data['authtoken'])['email']
+    number = data['phone']
+    print(email, number)
+    users.update({"email": email}, {"$set": {"phone": number}})
 
 @app.route("/api/register", methods=['POST'])
 def register():
