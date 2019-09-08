@@ -296,10 +296,7 @@
 
     </script>
     <script>
-        const socket = io('https://intellicity.tech', {
-            secure: true,
-            rejectUnauthorized: false
-        });
+        const socket = io('https://intellicity.tech');
         // const socket = io('http://127.0.0.1:5000');
 
         socket.on('message', (data) => {
