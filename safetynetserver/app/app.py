@@ -10,16 +10,16 @@ socketio = SocketIO(app)
 if __name__ == '__main__':
     socketio.run(app)
 
-@socketio.on('message', namespace='/socket')
+@socketio.on('message')
 def handle_message(message):
     print(message)
     emit('update', message, broadcast=True)
 
-@socketio.on('connect', namespace='/socket')
+@socketio.on('connect')
 def test_connect():
     print('connect')
     # emit('my response', {'data': 'Connected'})
 
-@socketio.on('disconnect', namespace='/socket')
+@socketio.on('disconnect')
 def test_disconnect():
     print('Client disconnected')
