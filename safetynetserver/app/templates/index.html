@@ -323,47 +323,13 @@
                         if (this.readyState == 4 && this.status == 200) {
                             tmp = JSON.parse(xhr.responseText)
 
-                            n = 0
                             tmp.forEach(function (a) {
-
                                 marker = new google.maps.Marker({
                                     map: map,
                                     draggable: false,
                                     animation: google.maps.Animation.DROP,
                                     position: { lat: a['latitude'], lng: a['longitude'] }
                                 })
-                                data = {
-                                    'marker': marker,
-                                    'id': a['_id'],
-                                    'description': a['description'],
-                                    'tag': a['tags']
-                                }
-                                markers.push(data)
-                                markers[n]['marker'].addListener('click', function () {
-                                    var xhr2 = new XMLHttpRequest();
-                                    xhr2.onreadystatechange = func
-                                    xhr2.open("POST", "https://safetynet.abobba.com/api/retrieveimg", false);
-                                    xhr2.setRequestHeader('Content-Type', 'application/json');
-                                    xhr2.send(JSON.stringify({
-                                        "id": data['id']['$oid']
-                                    }));
-                                    function func() {
-                                        if (this.readyState == 4 && this.status == 200) {
-                                            tmp2 = JSON.parse(xhr2.responseText)
-                                            img = tmp2[0]['image']
-                                        } else {
-                                            img = ""
-                                        }
-                                        contentString = "<div class=\"card\" style=\"width: 18rem;\">\r\n  <img class=\"card-img-top\" src=\"" + img + "\" alt=\"Image Not Available\">\r\n  <div class=\"card-body\">\r\n    <h5 class=\"card-title\">" + data['tag'] + "</h5>\r\n    <p class=\"card-text\">" + data['description'] + "</p>\r\n  </div>\r\n</div>"
-                                        infowindow = new google.maps.InfoWindow({
-                                            content: contentString
-                                        });
-                                        infowindow.open(map, data['marker']);
-                                    }
-
-                                });
-                                n = n + 1
-
                                 heatmapData.push(new google.maps.LatLng(a['latitude'], a['longitude']))
                             });
                             console.log("markers" + markers)
