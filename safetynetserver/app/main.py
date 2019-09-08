@@ -5,17 +5,17 @@ from flask_socketio import SocketIO, emit
 socketio = SocketIO(app)
 
 
-@socketio.on('message', namespace='/socket')
+@socketio.on('message', namespace='/live')
 def handle_message(message):
-    emit('message', message, broadcast=True, namespace = "/socket")
+    emit('message', message, broadcast=True, namespace = "/live")
 
 
-@socketio.on('connect', namespace='/socket')
+@socketio.on('connect', namespace='/live')
 def test_connect():
     print("Connected")
 
 
-@socketio.on('disconnect', namespace='/socket')
+@socketio.on('disconnect', namespace='/live')
 def test_disconnect():
     print('Client disconnected')
 
