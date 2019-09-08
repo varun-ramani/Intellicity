@@ -84,28 +84,32 @@
                                     <div class="col s4" style="text-align: center">
                                         <button class="btn-lg "
                                             style="border-radius: 50%; outline: none !important; background-color: orange"
-                                            data-toggle="collapse" href="#final"><i
-                                                class="fas fa-fire-alt"></i></button>
+                                            data-toggle="collapse" href="#final"><i class="fas fa-fire-alt"
+                                                onclick="updateTag('Fire')"></i></button>
                                     </div>
                                     <div class="col s4" style="text-align: center">
                                         <button class="btn-lg btn-primary"
                                             style="border-radius: 50%; outline: none !important;" data-toggle="collapse"
-                                            href="#final"><i class="fas fa-water"></i></button>
+                                            href="#final" onclick="updateTag('Flooding')"><i
+                                                class="fas fa-water"></i></button>
                                     </div>
                                     <div class="col s4" style="text-align: center">
                                         <button class="btn-lg btn-dark"
                                             style="border-radius: 50%; outline: none !important;" data-toggle="collapse"
-                                            href="#final"><i class="fas fa-hammer"></i></button>
+                                            href="#final" onclick="updateTag('Infrastructure Damage')"><i
+                                                class="fas fa-hammer"></i></button>
                                     </div>
                                     <div class="col s4" style="text-align: center">
                                         <button class="btn-lg btn-warning"
                                             style="border-radius: 50%; outline: none !important;" data-toggle="collapse"
-                                            href="#final"><i class="fas fa-bolt"></i></button>
+                                            href="#final" onclick="updateTag('Electrical Damage')"><i
+                                                class="fas fa-bolt"></i></button>
                                     </div>
                                     <div class="col s4" style="text-align: center">
                                         <button class="btn-lg btn-danger"
                                             style="border-radius: 50%; outline: none !important;" data-toggle="collapse"
-                                            href="#final"><i class="fas fa-car-crash"></i></button>
+                                            href="#final" onclick="updateTag('Car Crash')"><i
+                                                class="fas fa-car-crash"></i></button>
                                     </div>
                                 </div>
                             </div>
@@ -121,12 +125,14 @@
                                     <div class="col s4" style="text-align: center">
                                         <button class="btn-lg btn-danger"
                                             style="border-radius: 50%; outline: none !important;" data-toggle="collapse"
-                                            href="#final"><i class="fas fa-dizzy"></i></button>
+                                            href="#final" onclick="updateTag('Violent Crime')"><i
+                                                class="fas fa-dizzy"></i></button>
                                     </div>
                                     <div class="col s4" style="text-align: center">
                                         <button class="btn-lg btn-dark"
                                             style="border-radius: 50%; outline: none !important;" data-toggle="collapse"
-                                            href="#final"><i class="fas fa-user"></i></button>
+                                            href="#final" onclick="updateTag('Nonviolent Crime')"><i
+                                                class="fas fa-user"></i></button>
                                     </div>
 
                                 </div>
@@ -143,17 +149,20 @@
                                     <div class="col s4" style="text-align: center">
                                         <button class="btn-lg btn-primary"
                                             style="border-radius: 50%; outline: none !important;" data-toggle="collapse"
-                                            href="#final"><i class="fas fa-restroom"></i></button>
+                                            href="#final" onclick="updateTag('Restroom')"><i
+                                                class="fas fa-restroom"></i></button>
                                     </div>
                                     <div class="col s4" style="text-align: center">
                                         <button class="btn-lg btn-dark"
                                             style="border-radius: 50%; outline: none !important;" data-toggle="collapse"
-                                            href="#final"><i class="fas fa-parking"></i></button>
+                                            href="#final" onclick="updateTag('Parking')"><i
+                                                class="fas fa-parking"></i></button>
                                     </div>
                                     <div class="col s4" style="text-align: center">
                                         <button class="btn-lg btn-success"
                                             style="border-radius: 50%; outline: none !important;" data-toggle="collapse"
-                                            href="#final"><i class="fa fa-trash"></i></button>
+                                            href="#final" onclick="updateTag('Trash')"><i
+                                                class="fa fa-trash"></i></button>
                                     </div>
                                 </div>
                             </div>
@@ -167,16 +176,15 @@
                             <textarea class="form-control" placeholder="Description" id="description"
                                 rows="1"></textarea>
                         </div>
-                        <!-- <div class="input-group mb-3">
+                        <div class="input-group mb-3">
                             <div class="custom-file">
                                 <input type="file" class="custom-file-input" id="cameraInput" accept="image/*"
-                                    capture="environment">
+                                    capture="environment" onchange="previewFile()">
                                 <label class="custom-file-label" for="inputGroupFile01">Choose Image</label>
                             </div>
-                        </div> -->
-                        <input type="file" capture="camera" accept="image/*;" id="cameraInput" name="cameraInput" capture>
+                        </div>
 
-                        <button class="btn btn-block btn-primary">Submit</button>
+                        <button class="btn btn-block btn-primary" onclick="report()">Submit</button>
                     </div>
                 </div>
 
@@ -189,34 +197,7 @@
     <div id="map" style="z-index:1; position: relative;"></div>
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
     <script>
-        tag = ''
-        $('#cameraInput').on('change', function (e) {
-            $data = e.originalEvent.target.files[0];
-            $reader = new FileReader();
-            reader.onload = function (evt) {
-                $('#your_img_id').attr('src', evt.target.result);
-                reader.readAsDataUrl($data);
-            }
-        });
-        function updateTag(tag2) {
-            tag = tag2
-        }
-        function report() {
 
-            data = {
-                'tags': tag,
-                'longitude': pos2['long'],
-                'latitude': pos2['lat'],
-                'authtoken': Cookies.get('authtoken'),
-                'image': ,
-                'description': document.getElementById('description')
-            }
-        }
-
-
-        $('.a1').click(function (e) {
-            $('.a2').collapse('hide');
-        });
         var map, infoWindow, tmp, pos2;
         var heatmapData = []
 
@@ -276,6 +257,97 @@
                 'Error: Your browser doesn\'t support geolocation.');
             infoWindow.open(map);
         }
+
+    </script>
+    <script>
+        tag = ''
+        imagefinal = ''
+        function previewFile() {
+            // Read in file
+            var file = event.target.files[0];
+
+            // Ensure it's an image
+            if (file.type.match(/image.*/)) {
+                console.log('An image has been loaded');
+
+                // Load the image
+                var reader = new FileReader();
+                reader.onload = function (readerEvent) {
+                    var image = new Image();
+                    image.onload = function (imageEvent) {
+
+                        // Resize the image
+                        var canvas = document.createElement('canvas'),
+                            max_size = 150,// TODO : pull max size from a site config
+                            width = image.width
+                        height = image.height
+                        if (width > height) {
+                            if (width > max_size) {
+                                height *= max_size / width;
+                                width = max_size;
+                            }
+                        } else {
+                            if (height > max_size) {
+                                width *= max_size / height;
+                                height = max_size;
+                            }
+                        }
+                        canvas.width = width;
+                        canvas.height = height;
+                        canvas.getContext('2d').drawImage(image, 0, 0, width, height);
+                        var dataUrl = canvas.toDataURL('image/jpeg');
+                        imagefinal = dataUrl
+                        console.log(dataUrl)
+
+                    }
+                    image.src = readerEvent.target.result;
+
+                }
+                reader.readAsDataURL(file);
+            }
+        };
+
+
+
+        function updateTag(tag2) {
+            tag = tag2
+            console.log("a" + tag2)
+            document.getElementById('tag').value = tag
+        }
+        function report() {
+
+            data = {
+                'tags': tag,
+                'longitude': pos2['lng'],
+                'latitude': pos2['lat'],
+                'authtoken': Cookies.get('authtoken'),
+                'image': imagefinal,
+                'description': document.getElementById('description')
+
+            }
+            console.log(data)
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    tmp = JSON.parse(xhr.responseText)
+                    if (tmp['status'] == 'success') {
+                        console.log('success')
+                    } else {
+                        console.log('fail')
+
+                    }
+
+                }
+            };
+            xhr.open("POST", "https://safetynet.abobba.com/api/add", true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(JSON.stringify(data));
+        }
+
+
+        $('.a1').click(function (e) {
+            $('.a2').collapse('hide');
+        });
     </script>
     <script src="https://kit.fontawesome.com/56dec9df82.js"></script>
 
