@@ -221,8 +221,7 @@
 
     <div id="map" style="z-index:1; position: relative;"></div>
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"
-        integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 
     <script>
         if (Cookies.get('authtoken') == null) {
@@ -297,7 +296,7 @@
 
     </script>
     <script>
-        const socket = io('https://intellicity.tech');
+        const socket = io('http://intellicity.tech');
         // const socket = io('http://127.0.0.1:5000/socket');
 
         socket.on('message', (data) => {
@@ -468,4 +467,6 @@
 </body>
 
 </html>
+
+
 
