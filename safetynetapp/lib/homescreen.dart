@@ -91,8 +91,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
             ActionButton(
                 () => addEntry("Accident", Colors.blue, context), Colors.blue, FontAwesomeIcons.carCrash, "Accident"),
-            ActionButton(() =>  addMarker("Infra Damage"), Colors.black, FontAwesomeIcons.hammer,
-                "Infra Damage"),
+            ActionButton(
+                () => addEntry("Infrastructure", Colors.black, context), Colors.black, FontAwesomeIcons.hammer, "Infrastructure"),
           ],
         ),
       ],
@@ -299,7 +299,7 @@ Future addMarker(String danger) async {
           Marker(
             markerId: MarkerId(responseData[i]['_id']['\$oid']),
             position: LatLng(responseData[i]['latitude'], responseData[i]['longitude']),
-            infoWindow: InfoWindow(title: responseData[i]['tags'], snippet: responseData[i]['description'])
+            infoWindow: InfoWindow(title: responseData[i]['tags'], snippet: responseData[i]['description']),
           )
         );
       }

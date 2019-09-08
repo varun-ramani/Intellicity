@@ -19,7 +19,7 @@ def detect_labels(bucket, key, max_labels=10, min_confidence=90, region="eu-west
 
 
 for label in detect_labels(BUCKET, KEY):
-	print "{Name} - {Confidence}%".format(**label)
+	print("{Name} - {Confidence}%".format(**label))
 
 """
 	Expected output:

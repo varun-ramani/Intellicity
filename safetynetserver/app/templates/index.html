@@ -303,7 +303,7 @@
             currPos()
             console.log('socket receive')
         });
-        var map, infoWindow, tmp, pos2;
+        var map, pos2;
         var heatmapData = []
 
         function initMap() {
@@ -313,15 +313,16 @@
             });
             currPos()
         }
+        var markers = new Array()
+
         function currPos() {
-            markers = []
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(function (position) {
                     var xhr = new XMLHttpRequest();
                     xhr.onreadystatechange = function () {
                         if (this.readyState == 4 && this.status == 200) {
                             tmp = JSON.parse(xhr.responseText)
-                            console.log(tmp)
+
                             tmp.forEach(function (a) {
                                 marker = new google.maps.Marker({
                                     map: map,
@@ -329,48 +330,9 @@
                                     animation: google.maps.Animation.DROP,
                                     position: { lat: a['latitude'], lng: a['longitude'] }
                                 })
-                                data = {
-                                    'marker': marker,
-                                    'id': a['_id'],
-                                    'description': a['description'],
-                                    'tag': a['tags']
-                                }
-                                markers.push(data)
-                                marker.addListener('click', function () {
-
-
-                                    var xhr = new XMLHttpRequest();
-                                    xhr.onreadystatechange = function () {
-                                        if (this.readyState == 4 && this.status == 200) {
-                                            tmp = JSON.parse(xhr.responseText)
-                                            img = "data:image/png;base64," + tmp['image']
-
-                                        }else{
-                                            img = ""
-                                        }
-
-                                        contentString = "<div class=\"card\" style=\"width: 18rem;\">\r\n  <img class=\"card-img-top\" src=\"" + img + "\" alt=\"Image Not Available\">\r\n  <div class=\"card-body\">\r\n    <h5 class=\"card-title\">" + data['tag'] + "</h5>\r\n    <p class=\"card-text\">" + data['description'] + "</p>\r\n  </div>\r\n</div>"
-                                        var infowindow = new google.maps.InfoWindow({
-                                            content: contentString
-                                        });
-                                        infowindow.open(map, marker);
-                                    };
-                                    xhr.open("POST", "https://safetynet.abobba.com/api/retrieveimg", true);
-                                    xhr.setRequestHeader('Content-Type', 'application/json');
-                                    xhr.send(JSON.stringify({
-                                        // "id": data['id']['$oid']
-                                        "id": data['id']
-                                    }));
-
-
-
-
-                                });
-
                                 heatmapData.push(new google.maps.LatLng(a['latitude'], a['longitude']))
                             });
-                            console.log(markers)
-
+                            console.log("markers" + markers)
                             var heatmap = new google.maps.visualization.HeatmapLayer({
                                 data: heatmapData
                             });
@@ -378,7 +340,7 @@
                             heatmap.setMap(map);
                         }
                     };
-                    xhr.open("POST", "https://safetynet.abobba.com/api/retrieve", true);
+                    xhr.open("POST", "https://safetynet.abobba.com/api/retrieve", false);
                     xhr.setRequestHeader('Content-Type', 'application/json');
                     xhr.send(JSON.stringify({
                         "longitude": position.coords.longitude,
