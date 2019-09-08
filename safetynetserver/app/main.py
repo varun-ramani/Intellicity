@@ -2,7 +2,7 @@ from app import app
 import routes
 from flask_socketio import SocketIO, emit
 
-socketio = SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins=[])
 
 @socketio.on('message')
 def handle_message(message):
