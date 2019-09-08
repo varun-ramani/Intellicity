@@ -304,6 +304,9 @@
                 zoom: 6
             });
             infoWindow = new google.maps.InfoWindow;
+            currPos()
+        }
+        function currPos() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(function (position) {
                     var xhr = new XMLHttpRequest();
@@ -412,7 +415,7 @@
             document.getElementById('tag').value = tag
         }
         function report() {
-
+            currPos()
             data = {
                 'tags': tag,
                 'longitude': pos2['lng'],
