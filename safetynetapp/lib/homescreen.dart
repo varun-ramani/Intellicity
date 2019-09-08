@@ -121,10 +121,10 @@ class _HomeScreenState extends State<HomeScreen> {
         Row(
           children: <Widget>[
             ActionButton(
-                () => {}, Colors.blue, FontAwesomeIcons.restroom, "Restroom"),
+                () => addMarker("Restroom"), Colors.blue, FontAwesomeIcons.restroom, "Restroom"),
             ActionButton(
-                () => {}, Colors.red, FontAwesomeIcons.parking, "Parking"),
-            ActionButton(() => {}, Colors.green, FontAwesomeIcons.trash,
+                () => addMarker("Parking"), Colors.red, FontAwesomeIcons.parking, "Parking"),
+            ActionButton(() => addMarker("Trash"), Colors.green, FontAwesomeIcons.trash,
                 "Trash"),
           ],
         ),
