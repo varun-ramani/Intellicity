@@ -237,7 +237,7 @@
             email = document.getElementById('email').value
             password = document.getElementById('password').value
             console.log(email + " " + password)
-            if (email == undefined || password == undefined) {
+            if (email == '' || password == '') {
                 document.getElementById('authmsg').innerHTML = "<div class='alert alert-danger' id='authmsg' role='alert'>Bad Credentials</div>"
                 return
             }
@@ -270,7 +270,7 @@
             email = document.getElementById('email').value
             password = document.getElementById('password').value
             console.log(email + " " + password)
-            if (email == undefined || password == undefined) {
+            if (email == '' || password == '') {
                 document.getElementById('authmsg').innerHTML = "<div class='alert alert-danger' id='authmsg' role='alert'>Bad Input</div>"
                 return
             }
