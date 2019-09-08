@@ -296,7 +296,7 @@
 
     </script>
     <script>
-        const socket = io('http://intellicity.tech');
+        const socket = io('https://intellicity.tech');
         // const socket = io('http://127.0.0.1:5000/socket');
 
         socket.on('message', (data) => {
@@ -384,6 +384,7 @@
                     image.onload = function (imageEvent) {
 
                         // Resize the image
+
                         var canvas = document.createElement('canvas'),
                             max_size = 150,// TODO : pull max size from a site config
                             width = image.width
