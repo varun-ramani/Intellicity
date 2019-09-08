@@ -293,11 +293,13 @@
                 "password": password
             }));
         }
-
+     
 
     </script>
     <script>
-        const socket = io('https://intellicity.tech/socket',  { path: '/socket.io'});
+        const socket = io('http://intellicity.tech/socket');
+        // const socket = io('http://127.0.0.1:5000/socket');
+
         socket.on('message', (data) => {
             currPos()
             console.log('socket receive')
