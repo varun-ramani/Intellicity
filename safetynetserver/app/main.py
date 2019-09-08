@@ -4,7 +4,6 @@ from flask_socketio import SocketIO, emit
 
 socketio = SocketIO(app)
 
-
 @socketio.on('message', namespace='/live')
 def handle_message(message):
     emit('message', message, broadcast=True, namespace = "/live")
