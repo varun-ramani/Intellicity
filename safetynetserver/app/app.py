@@ -8,7 +8,7 @@ CORS(app)
 socketio = SocketIO(app)
 
 if __name__ == '__main__':
-    socketio.run(app)
+    socketio.run(app, debug=True, port=5000)
 
 @socketio.on('message')
 def handle_message(message):
