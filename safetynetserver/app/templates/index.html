@@ -100,9 +100,8 @@
                             </div>
                             <div class="col s4" style="text-align: center">
 
-                                <button class="a1 btn-lg btn-success"
-                                    style="outline: none !important;" data-toggle="collapse"
-                                    href="#utilities"><i class="fa fa-toilet"></i></button>
+                                <button class="a1 btn-lg btn-success" style="outline: none !important;"
+                                    data-toggle="collapse" href="#utilities"><i class="fa fa-toilet"></i></button>
                             </div>
                         </div>
                     </div>
@@ -222,6 +221,9 @@
 
     <div id="map" style="z-index:1; position: relative;"></div>
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"
+        integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+
     <script>
         if (Cookies.get('authtoken') == null) {
             $('#auth').modal({ backdrop: 'static', keyboard: false })
@@ -295,6 +297,10 @@
 
     </script>
     <script>
+        const socket = io('https://intellicity.tech/socket');
+        socket.on('message', (data) => {
+            currPos()
+        });
         var map, infoWindow, tmp, pos2;
         var heatmapData = []
 
@@ -432,6 +438,8 @@
                     tmp = JSON.parse(xhr.responseText)
                     if (tmp['status'] == 'success') {
                         console.log('success')
+                        socket.emit('message', { data: 'success' });
+
                     } else {
                         console.log('fail')
 
