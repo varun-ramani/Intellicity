@@ -311,7 +311,6 @@
                 // center: { lat: -34.397, lng: 150.644 },
                 zoom: 16
             });
-            infoWindow = new google.maps.InfoWindow;
             currPos()
         }
         function currPos() {
@@ -322,6 +321,7 @@
                     xhr.onreadystatechange = function () {
                         if (this.readyState == 4 && this.status == 200) {
                             tmp = JSON.parse(xhr.responseText)
+                            console.log(tmp)
                             tmp.forEach(function (a) {
                                 marker = new google.maps.Marker({
                                     map: map,
@@ -358,7 +358,8 @@
                                     xhr.open("POST", "https://safetynet.abobba.com/api/retrieveimg", true);
                                     xhr.setRequestHeader('Content-Type', 'application/json');
                                     xhr.send(JSON.stringify({
-                                        "id": data['id']['$oid']
+                                        // "id": data['id']['$oid']
+                                        "id": data['id']
                                     }));
 
 
@@ -368,6 +369,8 @@
 
                                 heatmapData.push(new google.maps.LatLng(a['latitude'], a['longitude']))
                             });
+                            console.log(markers)
+
                             var heatmap = new google.maps.visualization.HeatmapLayer({
                                 data: heatmapData
                             });
@@ -375,7 +378,6 @@
                             heatmap.setMap(map);
                         }
                     };
-                    console.log(markers)
                     xhr.open("POST", "https://safetynet.abobba.com/api/retrieve", true);
                     xhr.setRequestHeader('Content-Type', 'application/json');
                     xhr.send(JSON.stringify({
