@@ -6,7 +6,7 @@ socketio = SocketIO(app)
 
 @socketio.on('message')
 def handle_message(message):
-    emit('message', {"hey"}, broadcast=True)
+    emit('message', {"hey": "hey"}, broadcast=True)
 
 
 @socketio.on('connect')
