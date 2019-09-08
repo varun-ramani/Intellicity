@@ -96,6 +96,7 @@ def addreport():
             'description': data.get('description'),
             'tags': data.get('tags')
         }
+        print(data)
         if data['longitude'] == None or data['latitude'] ==  None or data['email'] == None:
             success = False
         else:

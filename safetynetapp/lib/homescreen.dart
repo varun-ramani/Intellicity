@@ -169,9 +169,11 @@ Future addMarker(String danger) async {
   Widget _buttons;
 
   void initState() {
+    print("initializing state!!!");
     super.initState();
     _buttonIcon = Icons.keyboard_arrow_up;
     _buttons = initialButtons();
+    _populateMap();
   }
 
   void addEntry(String tag, Color color, BuildContext context) async {
@@ -253,6 +255,7 @@ Future addMarker(String danger) async {
   void _onMapCreated(GoogleMapController controller) {
     _controller.complete(controller);
     mapController = controller;
+    _populateMap();
   }
 
   void setButtons(Widget buttons) {
@@ -279,7 +282,7 @@ Future addMarker(String danger) async {
     });
   }
 
-  void populateMap() async {
+  void _populateMap() async {
     await _getLocation();
     Map<String, double> payload = {
       "longitude": _longitude,
@@ -288,10 +291,18 @@ Future addMarker(String danger) async {
 
     Map<String, String> headers = {"Content-type": "application/json"};
 
-    http.Response response = await http.post(server + "/api/retrieve", headers: headers, body: json.encode(payload));
-    Map<String, dynamic> responseMap = json.decode(response.body);
-
-    print(responseMap);
+    http.Response response = await http.post(server + "/api/retrieve", headers: headers, body: json.encode(payload)).then((http.Response response) {
+      List<dynamic> responseData = json.decode(response.body);
+      for (int i = 0; i < responseData.length; i++) {
+        _markers.add(
+          Marker(
+            markerId: MarkerId(responseData[i]['_id']['\$oid']),
+            position: LatLng(responseData[i]['latitude'], responseData[i]['longitude']),
+            infoWindow: InfoWindow(title: responseData[i]['tags'], snippet: responseData[i]['description'])
+          )
+        );
+      }
+    });
   }
 
   void _onPressed() {
