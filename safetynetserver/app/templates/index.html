@@ -269,6 +269,7 @@
         function register() {
             email = document.getElementById('email').value
             password = document.getElementById('password').value
+            console.log(email + " " + password)
             if (email == undefined || password == undefined) {
                 document.getElementById('authmsg').innerHTML = "<div class='alert alert-danger' id='authmsg' role='alert'>Bad Input</div>"
                 return
