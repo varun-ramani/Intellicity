@@ -7,6 +7,10 @@ from flask import render_template
 import traceback
 CONV = .01447178
 
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+
 @app.route("/", methods=['GET'])
 def index():
     return render_template("index.html" )
