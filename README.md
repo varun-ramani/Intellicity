@@ -2,6 +2,7 @@
 A croudsourcing based risk management system built for PennApps 2019
 
 ![App Screenshot](./screenshot.jpg)
+
 *A screenshot of the Flutter-based application*
 
 ## Inspiration
