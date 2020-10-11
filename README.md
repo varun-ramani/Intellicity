@@ -12,18 +12,9 @@ Each living in a relatively suburban area, we are often quite confused when walk
 IntelliCity works by leveraging the power of crowdsourcing. Whenever users spot an object, event or place that fits into one of several categories, they can report it through a single button in our app. This is then relayed through our servers and other users on our app can view this report along with any associated images or descriptions, conveniently placed as a marker on a map.
 
 ## How we built it
-
-
-IntelliCity was built using a variety of different frameworks and tools. Our front-end was designed using Flutter and the Google Maps API, which provided us with an efficient way to get geolocation data and place markers. Our backend was made using Flask and Google-Cloud.
+Intellicity relies on a variety of different technologies to function effectively. 
+The native Android application was constructed using Flutter and the Google Maps plugin, while the secondary frontend,
+a mobile website, swapped Flutter for Bootstrap and web technologies. The backend was written entirely in Python 3 - Flask, MongoDB, and AWS Rekognition served as our web framework, database, and image recognition platform. Instead of using Firebase Cloud Messaging for notifications, we opted to handle them with straightforward SMS messages sent using the Twilio API.
 
 ## Challenges we ran into
 Although we are quite happy with our final result, there were definitely a few hurdles we faced along the way. One of the most significant of these was properly optimizing our app for mobile devices, for which we were using Flutter, a relatively new framework for many of us. A significant challenge related to this was placing custom, location-dependent markers for individual reports. Another challenge we faced was transmitting the real-time data throughout our setup and having it finally appear on individual user accounts. Finally, a last challenge we faced was actually sending text messages to users when potential risks were identified in their area.
-
-## Accomplishments that we're proud of
-We are proud of getting a functional app for both mobile and web.
-
-## What we learned
-We learned a significant amount throughout this hackathon, about everything from using specific frameworks and APIS such as Flutter, Google-Maps, Flask and Twilio to communication and problem-solving skills.
-
-## What's next for IntelliCity
-In the future, we would like to add support for detailed analysis of specific cities.
