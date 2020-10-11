@@ -1,8 +1,9 @@
 from pymongo import MongoClient
 from bson.json_util import dumps
 from bson.objectid import ObjectId
+import config
 
-database = MongoClient('35.224.43.169', 27017)['safetynetdb']
+database = MongoClient(config.mongodb_ip, 27017)['safetynetdb']
 # database = MongoClient()['safetynetdb']
 
 users = database['users']
